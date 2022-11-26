@@ -7,11 +7,12 @@
 2022.11-2025.9，问天，求己，无限进步。
 ***
 ## Week1 (2022.11.07-2022.11.13)
-	代码见[Week1](https://github.com/Lozumi/Infinite_Learning/tree/main/WeeklyReport/Week1)
-1. 学习CSAPP 中文导读
-2. 完成UOJ W1-4部分习题
-3. 学习CPP 函数章节
++ 学习CSAPP 中文导读
++ 完成[UOJ W1-4（部分）](https://www.lozumi.com/category/UOJ/)
++ 学习CPP 函数
 ## Week2(2022.11.14-2022.11.20)
-	代码见[Week2](https://github.com/Lozumi/Infinite_Learning/tree/main/WeeklyReport/Week2)
++ 完成[NOJ S1-4](https://www.lozumi.com/category/NOJ/)
++ 学习CPPPP 预备、变量和基本类型
 ## Week3(2022.11.21-2022.11.27)
-	代码见[Week3](https://github.com/Lozumi/Infinite_Learning/tree/main/WeeklyReport/Week3)
++ 完成[NOJ S5](https://www.lozumi.com/category/NOJ/)
++ 学习CPP 字符串
