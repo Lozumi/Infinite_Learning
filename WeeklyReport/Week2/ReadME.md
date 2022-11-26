@@ -6,9 +6,7 @@
 
 #### （一）数据类型和表达式
 
-1.C语言运算符及其优先级、结合性
-
-pic1
+1.C语言运算符及其优先级、结合性![pic1](E:\CS Proj\LE_Learning\WeeklyReport\Week2\pic1.png)
 
 + 注意
 
