@@ -53,3 +53,8 @@
 	arr_2d[m][n] == *(*(arr_2d + m) + n);
 	pz[m][n] == *(*(pz + m) + n);
 ```
+	- 函数与多维数组
+	声明函数的形参有三种方式：
+	`void somefunction( int (* pz)[4])`
+	`void somefunction( int (* pz)[4])`
+	`void somefunction( int (* pz)[4])`
