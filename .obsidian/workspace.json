@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ReadME.md",
+                "file": "Notes/Study/【C】洛衣的C学习笔记.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ReadME.md",
+                "file": "Notes/Study/【C】洛衣的C学习笔记.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ReadME.md",
+                "file": "Notes/Study/【C】洛衣的C学习笔记.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ReadME.md"
+                "file": "Notes/Study/【C】洛衣的C学习笔记.md"
               }
             }
           }
@@ -138,9 +138,12 @@
   },
   "active": "78984f6374716112",
   "lastOpenFiles": [
+    "Notes/Exercise/NOJ T023 探索合数世纪.md",
+    "Notes/Exercise/NOJ T021 除法.md",
+    "Notes/Exercise/C语言实现网络聊天室.md",
+    "ReadME.md",
     "General/General_Sche.md",
     "WeeklyReport/Week2/ReadME.md",
-    "ReadME.md",
     "WeeklyReport/Week1/ReadME.md",
     "WeeklyReport/Week2/pic1.png",
     "WeeklyReport/Week2/未命名.md"
