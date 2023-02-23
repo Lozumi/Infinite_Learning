@@ -11,8 +11,12 @@
             "id": "78984f6374716112",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "ReadME.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "ReadME.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "ReadME.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "ReadME.md"
+              }
             }
           }
         ]
@@ -130,6 +138,7 @@
   },
   "active": "78984f6374716112",
   "lastOpenFiles": [
+    "General/General_Sche.md",
     "WeeklyReport/Week2/ReadME.md",
     "ReadME.md",
     "WeeklyReport/Week1/ReadME.md",
