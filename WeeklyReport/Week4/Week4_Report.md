@@ -54,7 +54,9 @@
 	pz[m][n] == *(*(pz + m) + n);
 ```
 	- 函数与多维数组
-	声明函数的形参有三种方式：
-	`void somefunction( int (* pz)[4])`
-	`void somefunction( int (* pz)[4])`
-	`void somefunction( int (* pz)[4])`
+	声明函数的形参有两种方式：
+	```c
+	void somefunction( int (* pz)[4]);
+	void somefunction( int pz[][4]);// 第一个空的方括号表明pz是一个指针
+```
+
