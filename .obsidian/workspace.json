@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/Study/【C】洛衣的C学习笔记.md",
+                "file": "WeeklyReport/Week1/W4/Week4_Report.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Notes/Study/【C】洛衣的C学习笔记.md",
+                "file": "WeeklyReport/Week1/W4/Week4_Report.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Notes/Study/【C】洛衣的C学习笔记.md",
+                "file": "WeeklyReport/Week1/W4/Week4_Report.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Notes/Study/【C】洛衣的C学习笔记.md"
+                "file": "WeeklyReport/Week1/W4/Week4_Report.md"
               }
             }
           }
@@ -149,8 +149,8 @@
   },
   "active": "3e7b5447f216a096",
   "lastOpenFiles": [
-    "WeeklyReport/Week1/W4/Week4_Report.md",
     "Notes/Study/【C】洛衣的C学习笔记.md",
+    "WeeklyReport/Week1/W4/Week4_Report.md",
     "ReadME.md",
     "Notes/Exercise/NOJ T023 探索合数世纪.md",
     "Notes/Exercise/NOJ T021 除法.md",
