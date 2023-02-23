@@ -21,7 +21,7 @@
   	```c
   	int days[] = {1, 2, 3, 4, 5};
   	printf("%d %d", sizeof days, sizeof days[1]);
-
+	``
 - 指定初始化器
 
 - 指定数组的大小
