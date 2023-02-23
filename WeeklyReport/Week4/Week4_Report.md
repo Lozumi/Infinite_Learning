@@ -13,9 +13,9 @@
 	- 初始化数组
 		计算数组大小时，sizeof后可直接接变量，不需要加括号。
 		```c
-	int days[] = {1, 2, 3, 4, 5};
+int days[] = {1, 2, 3, 4, 5};
 
-	printf("%d %d", sizeof days, sizeof days[1]);
+printf("%d %d", sizeof days, sizeof days[1]);
 		```
 	  - 指定初始化器
 	  - 指定数组的大小
