@@ -61,4 +61,4 @@
 	void somefunction( int (* pz)[4], int rows);
 	void somefunction( int pz[][4], int rows);// 第一个空的方括号表明pz是一个指针
 ```
-
+### (三)字符串和字符串函数
