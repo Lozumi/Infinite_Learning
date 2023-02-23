@@ -74,7 +74,7 @@
 	- 字符串数组
 	- 指针表示法
 	```c
-	char ar1[] = "Something.";
-	char * pt1[] = "Something.";
+	const char ar1[] = "Something.";
+	const char * pt1[] = "Something.";
 ```
 	以上两个声明表明，pt1和ar1都是该字符串的地址。在这两种情况下，带双引号的字符串本身决定了预留给字符串的存储空间。
