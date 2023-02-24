@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "WeeklyReport/Week4/Week4_Report.md",
+                "file": "WeeklyReport/Week4/ReadME.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "WeeklyReport/Week4/Week4_Report.md",
+                "file": "WeeklyReport/Week4/ReadME.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "WeeklyReport/Week4/Week4_Report.md",
+                "file": "WeeklyReport/Week4/ReadME.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "WeeklyReport/Week4/Week4_Report.md"
+                "file": "WeeklyReport/Week4/ReadME.md"
               }
             }
           }
@@ -149,10 +149,11 @@
   },
   "active": "3e7b5447f216a096",
   "lastOpenFiles": [
+    "WeeklyReport/Week4/Week4_Report.md",
+    "WeeklyReport/Week4/ReadME.md",
     "WeeklyReport/Week4/string_pointer.exe",
     "WeeklyReport/Week4/string_pointer.c",
     "未命名.md",
-    "WeeklyReport/Week4/Week4_Report.md",
     "Week4_Report.pdf",
     "WeeklyReport/Week4/array_initial.exe",
     "WeeklyReport/Week4/array_initial.c",
