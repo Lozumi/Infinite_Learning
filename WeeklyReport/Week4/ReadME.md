@@ -138,3 +138,26 @@ char sa[3][3] = { "Sun", "Yah", "Sen" };// 内含3个数组的数组，每个数
 	- 指向标准文件的指针：stdin、stdout和stderr
 - 文件I/O：fprintf()、fscanf()、fgets()和fputs()
 ### （六）结构和其他数据形式
+- 建立结构声明
+- 定义结构变量
+注意，结构标记是可选的。若声明结构只用来定义一个结构变量，结构标记可以省略；若打算多次使用结构模板，则必须使用带标记的结构声明。
+```c
+struct book{
+	char title[MAXTITL];
+	char author[MAXAUTL];
+	float value;
+};// 带标记“book”的结构声明
+struct book library;// 定义结构变量
+
+struct book{
+	char title[MAXTITL];
+	char author[MAXAUTL];
+	float value;
+} library;// 声明结构并定义结构变量
+
+struct book{
+	char title[MAXTITL];
+	char author[MAXAUTL];
+	float value;
+} library;
+```
