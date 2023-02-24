@@ -155,9 +155,12 @@ struct book{
 	float value;
 } library;// 声明结构并定义结构变量
 
-struct book{
+struct {
 	char title[MAXTITL];
 	char author[MAXAUTL];
 	float value;
-} library;
+} library;// 一次性声明结构并定义结构变量
 ```
+
+	- 初始化结构
+	- 访问结构成员
