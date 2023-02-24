@@ -120,3 +120,4 @@ char sa[3][3] = { "Sun", "Yah", "Sen" };// 内含3个数组的数组，每个数
 	double * ptd;
 	ptd = (double *) malloc(n * sizeof(double));// 创建动态数组
 ```
+### （五）文件输入/输出
