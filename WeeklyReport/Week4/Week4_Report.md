@@ -71,7 +71,6 @@
 		printf("%s, %p, %c\n", "We", "are", *"space farers");
 		// 输出：We \, 0x100000f61, s
 ```
-	- 字符串数组
 	- 指针表示法
 	```c
 	const char ar1[] = "Something.";
@@ -92,4 +91,9 @@
 		pt[0] = ’C‘;// 不推荐，实测不可行（Segmentation Fault）
 		const char *p1 = "Wow~";// 推荐用法
 		
+```
+- 字符串数组
+方式同样有数组表示法和指针表示法。
+```c
+const char *sp[3] = "" 
 ```
