@@ -136,3 +136,4 @@ char sa[3][3] = { "Sun", "Yah", "Sen" };// 内含3个数组的数组，每个数
 	}
 ```
 	- 指向标准文件的指针：stdin、stdout和stderr
+- 文件I/O：fprintf()、fscanf()、fgets()和fputs()
