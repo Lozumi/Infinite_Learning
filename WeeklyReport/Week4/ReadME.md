@@ -121,3 +121,7 @@ char sa[3][3] = { "Sun", "Yah", "Sen" };// 内含3个数组的数组，每个数
 	ptd = (double *) malloc(n * sizeof(double));// 创建动态数组
 	```
 ### （五）文件输入/输出
+- 标准I/O
+	- 检查命令行参数
+	- fopen()和fclose()
+	- getc()和putc()
