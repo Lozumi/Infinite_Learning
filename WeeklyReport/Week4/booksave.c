@@ -7,7 +7,7 @@
 struct film
 {
     char title[TSIZE];
-    int rating;
+    float rating;
 };
 char *s_gets(char *st, int n);
 int main()
@@ -19,7 +19,7 @@ int main()
     while (i < FMAX && s_gets(movies[i].title, TSIZE) != NULL && movies[i].title[0] != '\0')
     {
         puts("Enter rating:");
-        scanf("%d", &movies[i++].rating);
+        scanf("%f", &movies[i++].rating);
         while (getchar() != '\n')
             continue;
         puts("Enter next movie title:(Empty line to quite)");
@@ -30,8 +30,8 @@ int main()
         printf("Your movie list:\n");
 
     for (int j = 0; j < i; j++)
-        printf("Movie: %10s Rating: %5d", movies[j].title, movies[j].rating);
-    printf("Sayonala~");
+        printf("Movie: \t%s \tRating: %5.1f\n", movies[j].title, movies[j].rating);
+    printf("Sayonara~");
 
     return 0;
 }
