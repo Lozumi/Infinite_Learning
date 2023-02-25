@@ -163,13 +163,14 @@ struct {
 	float value;
 } library;// 一次性声明结构并定义结构变量
 ```
-
-
 - 结构数组
 	- 声明结构数组
 	- 读取结构数组
 - 嵌套结构
-```c
+	- 传递结构成员
+	- 传递结构的地址
+	- 传递结构
+	```c
 struct names {
 	char first[LEN];
 	char last[LEN];
@@ -190,9 +191,7 @@ struct student fellow= {
 
 printf("%s's income is %f",fellow.handle.first,fellow.income);
 ```
-	- 传递结构成员
-	- 传递结构的地址
-	- 传递结构
+
 - 结构/结构指针的双向通信
 - 结构和结构指针的选择：传递结构指针更高效，传递结构多用于小型结构。
 - 把结构内容保存到文件中【待复习】
