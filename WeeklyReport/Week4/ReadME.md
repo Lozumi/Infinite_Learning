@@ -199,3 +199,4 @@ printf("%s's income is %f",fellow.handle.first,fellow.income);
 - 联合
 - 枚举类型
 - typedef
+	- typedef为某一类型自定义名称，由编译器解释。
