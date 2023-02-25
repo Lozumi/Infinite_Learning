@@ -180,5 +180,9 @@ struct student {
 	char job[LEN];
 	float income;
 };
+struct student fellow= {
+	{}
+}
+printf("%s's income is %f",)
 ```
 - 
