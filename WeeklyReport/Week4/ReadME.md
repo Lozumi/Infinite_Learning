@@ -181,8 +181,14 @@ struct student {
 	float income;
 };
 struct student fellow= {
-	{}
-}
-printf("%s's income is %f",)
+	{ "Mingyang", "Guo"},
+	"Banana",
+	"Student",
+	114514.00
+};
+
+printf("%s's income is %f",fellow.handle.first,fellow.income);
 ```
-- 
+	- 传递结构成员
+	- 传递结构的地址
+	- 传递结构
