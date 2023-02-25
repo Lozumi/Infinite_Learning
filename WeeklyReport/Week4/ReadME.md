@@ -134,7 +134,7 @@ char sa[3][3] = { "Sun", "Yah", "Sen" };// 内含3个数组的数组，每个数
 	{
 		putchar(ch);
 	}
-```
+	```
 	- 指向标准文件的指针：stdin、stdout和stderr
 - 文件I/O：fprintf()、fscanf()、fgets()和fputs()
 ### （六）结构和其他数据形式
@@ -190,7 +190,7 @@ struct student fellow= {
 };
 
 printf("%s's income is %f",fellow.handle.first,fellow.income);
-```
+	```
 
 - 结构/结构指针的双向通信
 - 结构和结构指针的选择：传递结构指针更高效，传递结构多用于小型结构。

@@ -133,7 +133,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -146,7 +147,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "3e7b5447f216a096",
+  "active": "72fb7a33d812b98e",
   "lastOpenFiles": [
     "WeeklyReport/Week4/booksave.exe",
     "WeeklyReport/Week4/booksave.c",
