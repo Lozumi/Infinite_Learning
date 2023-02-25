@@ -202,3 +202,7 @@ printf("%s's income is %f",fellow.handle.first,fellow.income);
 	- typedef为某一类型自定义名称，由编译器解释。
 	- typedef和#define的区别
 ### （七）高级数据类型
+- 链表
+	- 显示链表
+	- 创建链表
+	- 释放链表
