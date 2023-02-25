@@ -195,8 +195,10 @@ printf("%s's income is %f",fellow.handle.first,fellow.income);
 - 结构/结构指针的双向通信
 - 结构和结构指针的选择：传递结构指针更高效，传递结构多用于小型结构。
 - 把结构内容保存到文件中【待复习】
-- 链式结构（链表）
+- 链式结构
 - 联合
 - 枚举类型
 - typedef
 	- typedef为某一类型自定义名称，由编译器解释。
+	- typedef和#define的区别
+### （七）高级数据类型
