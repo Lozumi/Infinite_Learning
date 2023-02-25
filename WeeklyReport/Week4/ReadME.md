@@ -192,3 +192,4 @@ printf("%s's income is %f",fellow.handle.first,fellow.income);
 	- 传递结构成员
 	- 传递结构的地址
 	- 传递结构
+- 结构/结构指针的双向通信
