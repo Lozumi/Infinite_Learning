@@ -194,3 +194,8 @@ printf("%s's income is %f",fellow.handle.first,fellow.income);
 	- 传递结构
 - 结构/结构指针的双向通信
 - 结构和结构指针的选择
+- 把结构内容保存到文件中
+- 链式结构（链表）
+- 联合
+- 枚举类型
+- typedef
