@@ -166,4 +166,19 @@ struct {
 	- 访问结构成员
 - 结构数组
 	- 声明结构数组
-- 嵌套数组
+	- 读取结构数组
+- 嵌套结构
+```c
+struct names {
+	char first[LEN];
+	char last[LEN];
+};
+
+struct student {
+	struct names handle;
+	char food[LEN];
+	char job[LEN];
+	float income;
+};
+```
+- 
