@@ -18,8 +18,19 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "33dbf1bfbb03835c",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.1.16"
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -147,7 +158,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "3e7b5447f216a096",
+  "active": "33dbf1bfbb03835c",
   "lastOpenFiles": [
     "WeeklyReport/Week5/ReadME.md",
     "WeeklyReport/Week5/Untitled.md",
