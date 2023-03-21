@@ -13,24 +13,13 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "WeeklyReport/Week4/ReadME.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               }
             }
-          },
-          {
-            "id": "33dbf1bfbb03835c",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.1.16"
-              }
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -96,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "WeeklyReport/Week4/ReadME.md",
+                "file": "README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "WeeklyReport/Week4/ReadME.md",
+                "file": "README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -136,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "WeeklyReport/Week4/ReadME.md"
+                "file": "README.md"
               }
             }
           }
@@ -158,8 +147,19 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "33dbf1bfbb03835c",
+  "active": "3e7b5447f216a096",
   "lastOpenFiles": [
+    "WeeklyReport/Week8-10/Codes",
+    "WeeklyReport/Week8-10/Untitled Folder",
+    "WeeklyReport/Week8-10/ReadME.md",
+    "WeeklyReport/Week8-10/Untitled.md",
+    "WeeklyReport/Week8-10",
+    "WeeklyReport/Untitled Folder",
+    "WeeklyReport/Week5-7/Codes/title.html",
+    "WeeklyReport/Week5-7/Codes",
+    "WeeklyReport/Week5-7/ReadME.md",
+    "WeeklyReport/Week5-7",
+    "WeeklyReport/Week4/ReadME.md",
     "WeeklyReport/Week5/ReadME.md",
     "WeeklyReport/Week5/Untitled.md",
     "Untitled.md",
@@ -167,13 +167,9 @@
     "WeeklyReport/Week4/booksave.c",
     "README.md",
     "WeeklyReport/Week4/Week4_Report.md",
-    "WeeklyReport/Week4/ReadME.md",
     "WeeklyReport/Week4/string_pointer.exe",
     "WeeklyReport/Week4/string_pointer.c",
     "未命名.md",
-    "Week4_Report.pdf",
-    "WeeklyReport/Week4/array_initial.exe",
-    "WeeklyReport/Week4/array_initial.c",
     "Notes/Study/【C】洛衣的C学习笔记.md",
     "ReadME.md",
     "Notes/Exercise/NOJ T023 探索合数世纪.md",
