@@ -20,4 +20,23 @@
     .center {text-align:center;}
     ```
 
-    
+
+# 四、JavaScript基础
+
++ **应用注释符号验证浏览器是否支持 JavaScript 脚本功能**
+
+  如果用户不能确定浏览器是否支持JavaScript脚本，那么可以应用HTML提供的注释符号进行验证。HTML注释符号是以 **<--** 开始以 **-->** 结束的。如果在此注释符号内编写 JavaScrip t脚本，对于不支持 JavaScript 的浏览器，将会把编写的 JavaScript 脚本作为注释处理。
+
+  使用 JavaScript 脚本在页面中输出一个字符串，将 JavaScript 脚本编写在 HTML 注释中，如果浏览器支持 JavaScript 将输出此字符串，如果不支持将不输出此字符串，代码如下:
+
+  ```html
+  <script>
+  <!--
+  document.write("您的浏览器支持JavaScript脚本!");
+  //-->
+  </script>
+  ```
+
+  **注意：**注释行结尾处的两条斜杠 **//** 是 JavaScript 注释符号。这可以避免 JavaScript 执行 **-->** 标签。
+
++ 
