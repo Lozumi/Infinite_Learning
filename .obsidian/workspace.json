@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "README.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -69,7 +69,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "031621e6d588dd3d",
@@ -147,7 +148,7 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "3e7b5447f216a096",
+  "active": "bc4a97bccc7b9381",
   "lastOpenFiles": [
     "WeeklyReport/Week8-10/Codes/CSS.html",
     "WeeklyReport/Week8-10/Codes",
