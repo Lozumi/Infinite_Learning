@@ -39,7 +39,7 @@
 
   **注意：**注释行结尾处的两条斜杠 **//** 是 JavaScript 注释符号。这可以避免 JavaScript 执行 **-->** 标签。
 
-+ ## 重新定义变量
++ **重新定义变量**
 
   使用 var 关键字重新声明变量可能会带来问题。在块中重新声明变量也会重新声明块外的变量：
 
@@ -65,5 +65,54 @@
   // 这里输出 x 为 10
   ```
 
-  
++ **JavaScript 数组**
 
+  分步创建：
+
+  ```js
+  var cars=new Array();
+  cars[0]="Saab";
+  cars[1]="Volvo";
+  cars[2]="BMW";
+  ```
+
+  扼要创建（condensed array）：
+
+  ```js
+  var cars=new Array("Saab","Volvo","BMW");
+  ```
+
+  文本创建（literal array）：
+
+  ```js
+  var cars=["Saab","Volvo","BMW"];
+  ```
+
++ JavaScript 对象
+
+  声明：
+
+  ```js
+  var person={firstname:"John", lastname:"Doe", id:5566};
+  ```
+
+  寻址方式有二：
+
+  ```js
+  name=person.lastname;
+  name=person["lastname"];
+  ```
+
++ 声明变量类型
+
+  声明变量时，可以使用关键词 "new" 来声明其类型：
+
+  ```js
+  var carname=new String;
+  var x=      new Number;
+  var y=      new Boolean;
+  var cars=   new Array;
+  var person= new Object;
+  ```
+
+  实际上，JavaScript的所有变量都是对象。具体的数据类型是对象的具体实现。
