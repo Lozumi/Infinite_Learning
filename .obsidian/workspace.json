@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "WeeklyReport/Week8-10/ReadME.md",
                 "mode": "preview",
                 "source": false
               }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "031621e6d588dd3d",
@@ -86,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "README.md",
+                "file": "WeeklyReport/Week8-10/ReadME.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "README.md",
+                "file": "WeeklyReport/Week8-10/ReadME.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "README.md"
+                "file": "WeeklyReport/Week8-10/ReadME.md"
               }
             }
           }
@@ -148,8 +147,9 @@
       "markdown-importer:打开 Markdown 格式转换器": false
     }
   },
-  "active": "bc4a97bccc7b9381",
+  "active": "3e7b5447f216a096",
   "lastOpenFiles": [
+    "README.md",
     "WeeklyReport/Week8-10/Codes/CSS.html",
     "WeeklyReport/Week8-10/Codes",
     "WeeklyReport/Week8-10/Untitled Folder",
@@ -167,9 +167,7 @@
     "Untitled.md",
     "WeeklyReport/Week4/booksave.exe",
     "WeeklyReport/Week4/booksave.c",
-    "README.md",
     "WeeklyReport/Week4/Week4_Report.md",
-    "WeeklyReport/Week4/string_pointer.exe",
     "未命名.md",
     "Notes/Study/【C】洛衣的C学习笔记.md",
     "ReadME.md",
