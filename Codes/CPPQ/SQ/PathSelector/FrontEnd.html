@@ -1,0 +1,951 @@
+App.vue
+<template>
+    <n-dialog-provider>
+        <n-notification-provider>
+            <div class="h-screen">
+                <n-layout class="h-full" position="absolute">
+                    <n-layout-header class="h-12" id="header">
+                        <div class="flex flex-row h-full p-1 border-b-2 border-gray-100">
+                            <n-image width="100" src="/favicon.svg" />
+                            <div class="flex-grow"></div>
+                            <div class="flex pt-1">
+                                <n-button type="default" dashed @click="()=>{
+                    router.push('/')
+                  }">
+                                    主页
+                                </n-button>
+                            </div>
+                            <div class="flex pl-2 pr-2 pt-1">
+                                <n-button type="default" dashed @click="()=>{
+                    router.push('/map')
+                  }">
+                                    应用
+                                </n-button>
+                            </div>
+                        </div>
+                    </n-layout-header>
+                    <router-view></router-view>
+                </n-layout>
+            </div>
+        </n-notification-provider>
+    </n-dialog-provider>
+</template>
+<script setup lang="ts">
+    import { NNotificationProvider, NDialogProvider, NLayoutHeader, NLayout, NImage, NButton } from "naive-ui";
+    import { useRouter } from "vue-router";
+    const router = useRouter()
+</script>
+leafletMap.vue
+<template>
+    <div id="map" class="h-screen" :style="{
+    height: mapHeight
+  }"></div>
+</template>
+<script lang="ts">
+    export default {
+        name: "leafletMap"
+    }
+</script>
+<script setup lang="ts">
+    import * as Leaflet from 'leaflet'
+    import 'proj4leaflet'
+    import { onMounted, ref } from "vue";
+    import nodeStore from "../store/nodeStore";
+    import { MapNode } from "../struct/mapNode";
+    import { Marker } from "leaflet";
+    import { useNotification } from "naive-ui";
+    import MarkerCreationEmitter from "../event/markerCreationEvent";
+    const mapHeight = ref < string > ()
+    onMounted(() => {
+        let headerHeight = document.getElementById("header")?.offsetHeight!
+        let totalHeight = document.getElementById("app")?.offsetHeight!
+        mapHeight.value = totalHeight - headerHeight + 'px'
+    })
+    const notification = useNotification()
+    onMounted(() => {
+        let baiduCRS = new Leaflet.Proj.CRS('EPSG:900913', '+proj=merc +a=6378206 +b=6356584.314245179 +lat_ts=0.0 +lon_0=0.0 +x_0=0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs', {
+            resolutions: function () {
+                const level = 19
+                let res = [];
+                res[0] = Math.pow(2, 18);
+                for (let i = 1; i < level; i++) {
+                    res[i] = Math.pow(2, (18 - i))
+                }
+                return res;
+            }(),
+            origin: [0, 0],
+            bounds: Leaflet.bounds([20037508.342789244, 0], [0, 20037508.342789244])
+        });
+        let map = Leaflet.map('map', {
+            crs: baiduCRS,
+            center: [34.038612917802666, 108.77150912807576],
+            zoom: 17
+        });
+        let subdomains = '0123456789'
+        Leaflet.tileLayer('https://api.map.baidu.com/customimage/tile?qt=customimage&x={x}&y={y}&z={z}&udt=20230406&scale=2&customid=googlelite', {
+            subdomains: subdomains, tms: true
+        }).addTo(map);
+        nodeStore().setMap(map)
+        map.on('click', (event) => {
+            console.log(event.latlng)
+            if (nodeStore().inSelectionMode) {
+                let node: MapNode
+                if (nodeStore().hasBaseNode) {
+                    node = new MapNode(nodeStore().getNodesCount + 1, event.latlng)
+                } else {
+                    node = new MapNode(0, event.latlng)
+                }
+                let marker: Marker = Leaflet.marker(event.latlng, {
+                    title: "mapnode_" + node.id,
+                    draggable: false,
+                    riseOnHover: true
+                }).addTo(map)
+                if (nodeStore().hasBaseNode) {
+                    marker.bindPopup("地点 " + node.id, {
+                        closeButton: false
+                    })
+                } else {
+                    marker.bindPopup("起始地点", {
+                        closeButton: false
+                    })
+                }
+                marker.on('mouseover', (event) => {
+                    marker.openPopup()
+                })
+                marker.on('mouseout', (event) => {
+                    marker.closePopup()
+                })
+                if (nodeStore().hasBaseNode) {
+                    let icon = Leaflet.AwesomeMarkers.icon({
+                        markerColor: 'blue'
+                    })
+                    marker.setIcon(icon)
+                } else {
+                    let icon = Leaflet.AwesomeMarkers.icon({
+                        markerColor: 'orange'
+                    })
+                    marker.setIcon(icon)
+                }
+                node.marker = marker
+                if (nodeStore().hasBaseNode) {
+                    nodeStore().addMapNode(node)
+                    nodeStore().toggleSelectionMode()
+                    MarkerCreationEmitter.emit('markerCreation', {
+                        node: node,
+                        isBaseNode: false,
+                    });
+                } else {
+                    nodeStore().setBaseNode(node)
+                    nodeStore().toggleSelectionMode()
+                    MarkerCreationEmitter.emit('markerCreation', {
+                        node: node,
+                        isBaseNode: true,
+                    });
+                }
+                notification.destroyAll()
+            }
+        })
+    })
+</script>
+mapNodeInput.vue
+<template>
+    <div class="flex flex-col h-full px-3 border-r-2 border-r-cyan-400 overflow-y-auto scrollbar-hide">
+        <div class="sticky w-full pb-2 pt-2 top-0 z-50 bg-white">
+            <n-button v-if="!nodeStore().hasBaseNode" class="w-full" type="info" @click="createNode"
+                :disabled="nodeStore().isInSelectionMode">
+                选择起始地点
+            </n-button>
+            <div class="w-full" v-else>
+                <n-button class="w-full" type="info" @click="createNode" :disabled="nodeStore().isInSelectionMode">
+                    新建地点
+                </n-button>
+                <n-upload :custom-request="customRequest" :multiple="false" :max="1" abstract>
+                    <n-upload-trigger #="{ handleClick }" abstract>
+                        <n-button class="w-full mt-2" type="info" @click="()=>{
+                        handleClick();
+                      }">
+                            从CSV导入
+                        </n-button>
+                    </n-upload-trigger>
+                </n-upload>
+            </div>
+        </div>
+        <div class="flex-grow">
+            <div v-if="nodeStore().hasBaseNode">
+                <div>
+                    <n-card class="mb-3" bordered hoverable>
+                        <template #header>
+                            <div v-if="nodeStore().getBaseNode?.name !== undefined">
+                                {{ nodeStore().getBaseNode?.name }}
+                            </div>
+                            <div v-else>
+                                起始地点
+                            </div>
+                        </template>
+                        <template #action>
+                            <div class="flex flex-row gap-3">
+                                <div class="flex">
+                                    <n-button type="primary" @click="doReload">
+                                        重选
+                                    </n-button>
+                                </div>
+                            </div>
+                        </template>
+                    </n-card>
+                </div>
+                <div v-for="(node,index) in nodeStore().getNodes" :key="index">
+                    <n-card class="mb-3" @mouseenter="locationSelected(<number>index)"
+                        @mouseleave="locationDeSelected(<number>index)" bordered hoverable>
+                        <template #header>
+                            <div v-if="node.name !== undefined">
+                                地点{{ node.id }} {{ node.name }}
+                            </div>
+                            <div v-else>
+                                地点 #{{ node.id }}
+                            </div>
+                        </template>
+                        <template #action>
+                            <div class="flex flex-row gap-3">
+                                <div class="flex">
+                                    <n-button type="primary"
+                                        @click="showNodeEdit = !showNodeEdit; currentEditingNode.index = <number>index; currentEditingNode.node = node">
+                                        编辑
+                                    </n-button>
+                                </div>
+                                <div class="flex">
+                                    <n-button type="error" @click="deleteNode(node)">删除</n-button>
+                                </div>
+                            </div>
+                        </template>
+                    </n-card>
+                </div>
+            </div>
+        </div>
+        <div class="sticky w-full bottom-0 pb-3 z-50 bg-white">
+            <n-button class="w-full" type="warning" @click="doPlan" :disabled="!nodeStore().isValidData">
+                规划
+            </n-button>
+            <n-button class="w-full mt-3" type="error" @click="doReload">
+                清空
+            </n-button>
+            <n-button class="w-full mt-3" type="info" @click="doExport">
+                导出
+            </n-button>
+        </div>
+    </div>
+    <n-modal v-model:show="showNodeEdit" class="w-1/2" preset="card" title="编辑" size="huge" :bordered="true"
+        :closable="false" :mask-closable="false">
+        <n-form-item label="地点名称">
+            <n-input v-model:value="currentEditingNode.node.name" />
+        </n-form-item>
+        <n-alert type="info">
+            该事件应在下述时间区间内完成
+        </n-alert>
+        <div class="flex flex-row gap-3 pt-5">
+            <n-form-item label="起始时间">
+                <n-time-picker v-model:value="currentEditingNode.node.startTime" />
+            </n-form-item>
+            <n-form-item label="结束时间">
+                <n-time-picker v-model:value="currentEditingNode.node.endTime" />
+            </n-form-item>
+        </div>
+        <n-alert type="info">
+            预计处理该事件所用时长
+        </n-alert>
+        <n-form-item class="pt-5" label="所用时长">
+            <n-time-picker v-model:value="currentEditingNode.node.spentTime" />
+        </n-form-item>
+        <template #footer>
+            <div class="flex flex-row gap-2">
+                <div class="flex-grow" />
+                <div class="flex">
+                    <n-button type="success" @click="editNode" :disabled="!isValidData()">确定</n-button>
+                </div>
+            </div>
+        </template>
+    </n-modal>
+</template>
+<script lang="ts">
+    export default {
+        name: "mapNodeInput"
+    }
+</script>
+<script setup lang="ts">
+    import {
+        NCard,
+        NButton,
+        NModal,
+        NFormItem,
+        NInput,
+        NTimePicker,
+        NAlert,
+        NUpload,
+        NUploadTrigger,
+        NUploadDragger,
+        NText,
+        useNotification,
+        UploadCustomRequestOptions
+    } from 'naive-ui'
+    import nodeStore from "../store/nodeStore";
+    import 'leaflet.awesome-markers'
+    import * as Leaflet from 'leaflet'
+    import { ref } from "vue";
+    import { MapNode } from "../struct/mapNode";
+    import L, { LatLng, Marker, Polyline } from "leaflet";
+    import { instanceToPlain, plainToInstance } from "class-transformer";
+    import axios, { AxiosResponse } from "axios";
+    import MarkerCreationEmitter from "../event/markerCreationEvent";
+    import { NodeSequence } from "../struct/nodeSequence";
+    import { parse } from 'papaparse'
+    import domtoimage from 'dom-to-image'
+    const notification = useNotification()
+    function locationSelected(index: number) {
+        let icon = Leaflet.AwesomeMarkers.icon({
+            markerColor: 'green'
+        })
+        let node = nodeStore().getNodeByIndex(index)
+        node!.marker!.setIcon(icon)
+        nodeStore().setNode(index, node);
+    }
+    function locationDeSelected(index: number) {
+        let icon = Leaflet.AwesomeMarkers.icon({
+            markerColor: 'blue'
+        })
+        let node = nodeStore().getNodeByIndex(index)
+        node!.marker!.setIcon(icon)
+        nodeStore().setNode(index, node);
+    }
+    function createNode() {
+        nodeStore().toggleSelectionMode()
+        notification.info({
+            title: '请在地图上点击选择地点'
+        })
+    }
+    const showNodeEdit = ref < boolean > (false)
+    const currentEditingNode = ref < {
+        index: number,
+        node: MapNode,
+        isBaseNode: boolean
+    } > ({
+        index: 0,
+        node: new MapNode(0, new LatLng(0, 0)),
+        isBaseNode: false
+    })
+    MarkerCreationEmitter.on('markerCreation', (event) => {
+        if (event.isBaseNode) {
+        } else {
+            currentEditingNode.value.node = event.node
+            currentEditingNode.value.isBaseNode = false
+            currentEditingNode.value.index = nodeStore().getNodesCount - 1
+            showNodeEdit.value = true
+        }
+    })
+    function editNode() {
+        if (currentEditingNode.value.isBaseNode) {
+            console.log("edit base node")
+            const map = nodeStore().getMap!
+            let baseNode: MapNode = nodeStore().getBaseNode! as MapNode
+            nodeStore().clearBaseNode()
+            map.removeLayer(baseNode.marker!)
+        } else {
+            nodeStore().setNode(currentEditingNode.value.index, currentEditingNode.value.node as MapNode)
+            showNodeEdit.value = !showNodeEdit.value
+        }
+    }
+    function deleteNode(node: MapNode) {
+        const map = nodeStore().getMap!
+        map.removeLayer(node.marker!)
+        nodeStore().removeNodeByNode(node)
+        if (nodeStore().hasArrows) {
+            map.removeLayer(nodeStore().getArrows! as Polyline)
+            nodeStore().clearArrows()
+        }
+    }
+    function isValidData() {
+        return !(
+            (currentEditingNode.value.node.name == undefined)
+            || (currentEditingNode.value.node.name.length == 0)
+            || (currentEditingNode.value.node.startTime == undefined)
+            || (currentEditingNode.value.node.endTime == undefined)
+            || (currentEditingNode.value.node.startTime > currentEditingNode.value.node.endTime)
+            || (currentEditingNode.value.node.spentTime == undefined)
+        )
+    }
+    function doPlan() {
+        const map: Leaflet.Map = nodeStore().getMap! as Leaflet.Map
+        if (nodeStore().hasArrows) {
+            console.log("Clearing all arrows")
+            map.removeLayer(nodeStore().getArrows! as Polyline)
+            nodeStore().clearArrows()
+        }
+        axios.post("https://demo.lozumi.com:233/api/plan", JSON.stringify({
+            'base_node': instanceToPlain(nodeStore().getBaseNode),
+            'nodes': instanceToPlain(nodeStore().getNodes)
+        }))
+            .then((response: AxiosResponse<string, any>) => {
+                let nodeSequence: NodeSequence = plainToInstance(NodeSequence, response.data)
+                if (nodeSequence.nodeSequence.size > 0) {
+                    let nodes = new Array < LatLng > ()
+                    for (let i = 1; i <= nodeSequence.nodeSequence.size; i++) {
+                        console.log(nodeSequence.nodeSequence)
+                        let id = nodeSequence.nodeSequence.get(i.toString())!
+                        if (id == 0) {
+                            nodes.push(nodeStore().getBaseNode!.position)
+                        } else {
+                            nodes.push(nodeStore().getNodeById(id).position)
+                        }
+                    }
+                    let polyline = Leaflet.polyline(nodes, {
+                        color: '#ff0000',
+                        weight: 10
+                    }).addTo(map)
+                    Leaflet.polylineDecorator(polyline, {
+                        patterns: [
+                            {
+                                offset: 30,
+                                repeat: 60,
+                                symbol: Leaflet.Symbol.arrowHead({
+                                    pixelSize: 5,
+                                    headAngle: 75,
+                                    polygon: false,
+                                    pathOptions: {
+                                        stroke: true,
+                                        weight: 4,
+                                        color: '#fff'
+                                    }
+                                })
+                            }
+                        ]
+                    }).addTo(map)
+                    nodeStore().setArrows(polyline)
+                } else {
+                    notification.error({
+                        title: "无法得出可行方案",
+                        duration: 5000
+                    })
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+    function doReload() {
+        location.reload()
+    }
+    const customRequest = ({ file }: UploadCustomRequestOptions) => {
+        file.file?.text()
+            .then((text: string) => {
+                let result = parse(text, {
+                    header: false,
+                    skipEmptyLines: true,
+                    dynamicTyping: true,
+                })
+                for (let i = 1; i < result.data.length; i++) {
+                    let mapNode = getMapNode(result.data[i][1])
+                    mapNode.name = result.data[i][0]
+                    mapNode.spentTime = timeStringToUnixTimestamp("00:00:" + result.data[i][2])
+                    mapNode.startTime = timeStringToUnixTimestamp(result.data[i][3])
+                    mapNode.endTime = timeStringToUnixTimestamp(result.data[i][4])
+                    console.log(mapNode)
+                }
+            })
+    }
+    function getMapNode(name: string): MapNode {
+        let latlng = getLatLng(name)
+        let node = new MapNode(nodeStore().getNodesCount + 1, latlng)
+        let marker: Marker = Leaflet.marker(latlng, {
+            title: "mapnode_" + node.id,
+            draggable: false,
+            riseOnHover: true
+        }).addTo(nodeStore().getMap as Leaflet.Map)
+        marker.bindPopup("地点 " + node.id, {
+            closeButton: false
+        })
+        marker.on('mouseover', (event) => {
+            marker.openPopup()
+        })
+        marker.on('mouseout', (event) => {
+            marker.closePopup()
+        })
+        let icon = Leaflet.AwesomeMarkers.icon({
+            markerColor: 'blue'
+        })
+        marker.setIcon(icon)
+        node.marker = marker
+        nodeStore().addMapNode(node)
+        return node
+    }
+    function getLatLng(name: string): LatLng {
+        switch (name) {
+            case "教学东楼":
+                return new LatLng(34.039211214587354, 108.77333978816836)
+            case "计算机学院楼":
+                return new LatLng(34.039106512957524, 108.77532431395308)
+            case "星天苑D座":
+                return new LatLng(34.04130521978966, 108.76832841271465)
+            case "教学西楼":
+                return new LatLng(34.03728169217448, 108.77057318543919)
+            case "实验大楼":
+                return new LatLng(34.03592800853638, 108.76952366065426)
+            case "工训中心":
+                return new LatLng(34.041514617439965, 108.76670298117682)
+            case "星天苑操场":
+                return new LatLng(34.03805201069853, 108.76780789702308)
+            case "综合体育馆":
+                return new LatLng(34.038934502853884, 108.76660437968505)
+            case "翱翔体育馆":
+                return new LatLng(34.04084155170703, 108.77546146044595)
+            default:
+                return new LatLng(0.0, 0.0)
+        }
+    }
+    function timeStringToUnixTimestamp(timeString: string): number {
+        const [hours, minutes, seconds] = timeString.split(':').map(Number);
+        const currentDate = new Date();
+        currentDate.setHours(hours);
+        currentDate.setMinutes(minutes);
+        currentDate.setSeconds(seconds);
+        console.log(currentDate.getTime())
+        return currentDate.getTime();
+    }
+    function doExport() {
+        domtoimage.toBlob(document.getElementById("map"))
+            .then((blob: Blob) => {
+                let elementA = document.createElement('a');
+                elementA.href = URL.createObjectURL(blob);
+                document.body.appendChild(elementA);
+                elementA.click();
+                document.body.removeChild(elementA);
+            })
+    }
+</script>
+<style>
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+</style>
+markerCreationEvent.ts
+import mitt, {Emitter} from "mitt";
+import {MapNode} from "../struct/mapNode";
+type MarkerCreationEvent = {
+markerCreation: {
+node: MapNode,
+isBaseNode: boolean
+}
+}
+const MarkerCreationEmitter: Emitter<MarkerCreationEvent> = mitt<MarkerCreationEvent>()
+        export default MarkerCreationEmitter
+        main.ts
+        import {createApp} from 'vue'
+        import 'reflect-metadata'
+        import 'leaflet-polylinedecorator'
+        import './style.css'
+        import App from './App.vue'
+        import {createPinia} from "pinia";
+        import {router} from "./router";
+        const pinia = createPinia()
+        const app = createApp(App)
+        app.use(pinia)
+        app.use(router)
+        app.mount('#app')
+        homePage.vue
+        <template xmlns="http://www.w3.org/1999/html">
+            <div class="p-8">
+                <div class="flex felx-col items-center justify-center">
+                    <n-image width="100" src="/favicon.svg" />
+                </div>
+                <h1 class="text-4xl font-medium text-gray-700 text-center mt-6"> 时间管理大师 </h1>
+                <p class="text-center mt-6 text-lg font-light text-gray-500"> 时窗约束的多节点路径规划系统 </p>
+                <div class="mt-5 flex justify-center items-center">
+                    <n-button type="success" dashed size="large" class="w-40" @click="()=>{
+                  router.push('/map')
+                }">
+                        启动应用
+                    </n-button>
+                    <n-button type="info" dashed size="large" class="w-40 ml-5" @click="contactAuthor">
+                        联系作者
+                    </n-button>
+                </div>
+                <p class="text-center mt-6 text-lg font-light text-gray-500">
+                    《时间管理大师——时窗约束的多节点路径规划系统》是由西北工业大学Team
+                    Candere团队开发的一款Web应用程序，<br />在路径规划问题中创新性加入时间窗口约束，深度融合校园场景，为师生用户提供高效规划服务。
+                </p>
+            </div>
+            <n-divider title-placement="center">
+                <template #default>
+                    <div class="text-2xl font-medium text-gray-600">
+                        应用特性
+                    </div>
+                </template>
+            </n-divider>
+            <div class="grid grid-cols-1 md:grid-cols-3">
+                <div class="p-8">
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="bg-indigo-100 rounded-full w-16 h-16 flex justify-center items-center text-indigo-500 shadow-2xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 576 512"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <h2 class="uppercase mt-6 text-indigo-500 font-medium mb-3">操作可视化</h2>
+                        <p class="font-light text-sm text-gray-500 mb-3">
+                            应用提供简洁的网页界面，用户可便捷输入和编辑任务节点。
+                        </p>
+                    </div>
+                </div>
+                <div class="p-8">
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="bg-green-100 rounded-full w-16 h-16 flex justify-center items-center text-green-500 shadow-2xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 512 512"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <h2 class="uppercase mt-6 text-green-500 font-medium mb-3"> 时间窗约束 </h2>
+                        <p class="font-light text-sm text-gray-500 mb-3"> 应用创新性加入时间窗口约束，获取精确化、个性化规划结果。
+                        </p>
+                    </div>
+                </div>
+                <div class="p-8">
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="bg-red-100 rounded-full w-16 h-16 flex justify-center items-center text-red-500 shadow-2xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 384 512"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM96 64H288c17.7 0 32 14.3 32 32v32c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V96c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H96c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <h2 class="uppercase mt-6 text-red-500 font-medium mb-3"> 高性能计算 </h2>
+                        <p class="font-light text-sm text-gray-500 mb-3"> 应用利用Christofides、Tobo
+                            Search算法优化演算，规划最优移动路径。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-6">
+                <div class="p-8 col-span-1 md:col-span-2 md:col-start-2">
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="bg-yellow-100 rounded-full w-16 h-16 flex justify-center items-center text-yellow-500 shadow-2xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 512 512"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M64 256V160H224v96H64zm0 64H224v96H64V320zm224 96V320H448v96H288zM448 256H288V160H448v96zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <h2 class="uppercase mt-6 text-yellow-500 font-medium mb-3"> 一图流展示 </h2>
+                        <p class="font-light text-sm text-gray-500 mb-3">
+                            应用根据用户数据计算、渲染最优路径，以标点、箭头提示行程。
+                        </p>
+                    </div>
+                </div>
+                <div class="p-8 col-span-1 md:col-span-2 md:col-start-4">
+                    <div class="flex flex-col justify-center items-center">
+                        <div
+                            class="bg-purple-100 rounded-full w-16 h-16 flex justify-center items-center text-purple-500 shadow-2xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 640 512"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M337.8 5.4C327-1.8 313-1.8 302.2 5.4L166.3 96H48C21.5 96 0 117.5 0 144V464c0 26.5 21.5 48 48 48H592c26.5 0 48-21.5 48-48V144c0-26.5-21.5-48-48-48H473.7L337.8 5.4zM256 416c0-35.3 28.7-64 64-64s64 28.7 64 64v96H256V416zM96 192h32c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16H96c-8.8 0-16-7.2-16-16V208c0-8.8 7.2-16 16-16zm400 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16H512c-8.8 0-16-7.2-16-16V208zM96 320h32c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16H96c-8.8 0-16-7.2-16-16V336c0-8.8 7.2-16 16-16zm400 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v64c0 8.8-7.2 16-16 16H512c-8.8 0-16-7.2-16-16V336zM232 176a88 88 0 1 1 176 0 88 88 0 1 1 -176 0zm88-48c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H336V144c0-8.8-7.2-16-16-16z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <h2 class="uppercase mt-6 text-purple-500 font-medium mb-3"> 校园客制化 </h2>
+                        <p class="font-light text-sm text-gray-500 mb-3">
+                            深度融合校园场景，支持课程表导入节点，实现教育建筑位置绑定，方便师生高效使用。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <n-divider title-placement="center">
+                <template #default>
+                    <div class="text-2xl font-medium text-gray-600">
+                        使用指南
+                    </div>
+                </template>
+            </n-divider>
+            <div class="grid grid-cols-1 px-10 md:grid-cols-4 md:px-0">
+                <div class="col-span-1"></div>
+                <div class="col-span-2">
+                    <div class="text-left text-lg leading-loose">
+                        <p>
+                            1. 选择起点：在地图上标记位置，选择路径起点。
+                        </p>
+                        <p>
+                            2. 添加节点:
+                        <p>
+                            &nbsp;&nbsp;&nbsp;&nbsp;手动添加：选择”新建地点“，输入任务名称、时间窗口、预计时长，并在地图上标记位置。
+                        </p>
+                        <p>
+                            &nbsp;&nbsp;&nbsp;&nbsp;课程表导入：选择“从CSV导入”，上传格式化的课程表。
+                        </p>
+                        </p>
+                        <p>
+                            3. 规划路径：点击“规划”，最优路径会在右侧地图呈现。
+                        </p>
+                        <p>
+                            4. 导出结果：点击“导出”，即可导出行程信息。
+                        </p>
+                    </div>
+                </div>
+                <div class="col-span-1"></div>
+            </div>
+            <n-divider title-placement="center">
+                <template #default>
+                    <div class="text-2xl font-medium text-gray-600">
+                        开发团队
+                    </div>
+                </template>
+            </n-divider>
+            <div class="flex flex-col justify-center items-center text-center mb-5">
+                <p class="text-2xl">
+                    Team Candere
+                </p>
+                <p class="text-base">
+                    西北工业大学
+                </p>
+            </div>
+            <div class="flex flex-col gap-3 justify-center items-center mb-10 md:flex-row">
+                <div class="w-3/4 bg-white shadow rounded border-transparent cursor-pointer md:w-1/4">
+                    <div class="h-48 w-full checker-bg flex items-center justify-center p-4 text-blue-500">
+                        <div class="w-32 h-32 bg-gray-100 rounded-full bg-cover bg-center"
+                            style="background-image: url('/lykorisr.png');"></div>
+                    </div>
+                    <div class="p-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-gray-600 font-medium">
+                                李昊轩
+                            </h1>
+                        </div>
+                        <p class="text-gray-400 text-sm my-1">开发</p>
+                    </div>
+                </div>
+                <div class="w-3/4 bg-white shadow rounded border-transparent cursor-pointer md:w-1/4">
+                    <div class="h-48 w-full checker-bg flex items-center justify-center p-4 text-blue-500">
+                        <div class="w-32 h-32 bg-gray-100 rounded-full bg-cover bg-center"
+                            style="background-image: url('/lozumi.jpg');"></div>
+                    </div>
+                    <div class="p-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-gray-600 font-medium">
+                                刘黎可
+                            </h1>
+                        </div>
+                        <p class="text-gray-400 text-sm my-1">策划</p>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <script setup lang="ts">
+            import { NImage, NButton, NDivider } from "naive-ui";
+            import { useRouter } from "vue-router";
+            const router = useRouter()
+            function contactAuthor() {
+                window.location.href = 'mailto:li_haoxuan@mail.nwpu.edu.cn';
+            }
+        </script>
+        <style scoped>
+        </style>
+        mapPage.vue
+        <script setup lang="ts">
+            import MapNodeInput from "../components/mapNodeInput.vue";
+            import LeafletMap from "../components/leafletMap.vue";
+            import { NLayout, NLayoutContent, NLayoutSider } from "naive-ui";
+            import { onMounted, ref } from "vue";
+            import { useRouter } from "vue-router";
+            function isMobile() {
+                return navigator.userAgent.match(
+                    /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
+                );
+            }
+            const router = useRouter()
+            if (isMobile()) {
+                alert("请用电脑访问应用")
+                router.push('/')
+            }
+            const heightStyle = ref({
+                height: '100%'
+            })
+            onMounted(() => {
+                let headerHeight = document.getElementById("header")?.offsetHeight!
+                let totalHeight = document.getElementById("app")?.offsetHeight!
+                heightStyle.value.height = totalHeight - headerHeight + 'px'
+            })
+        </script>
+        <template>
+            <n-layout-content :content-style="heightStyle">
+                <n-layout has-sider class="h-full">
+                    <n-layout-sider>
+                        <map-node-input />
+                    </n-layout-sider>
+                    <n-layout-content class="h-full">
+                        <leaflet-map />
+                    </n-layout-content>
+                </n-layout>
+            </n-layout-content>
+        </template>
+        <style scoped>
+        </style>
+        router.ts
+        import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
+        import HomePage from "./pages/homePage.vue";
+        import MapPage from "./pages/mapPage.vue";
+        let routes = [
+        {
+        path: '/',
+        component: HomePage
+        },
+        {
+        path: '/map',
+        component: MapPage
+        }
+        ]
+        export const router = createRouter({
+        history: createWebHistory(),
+        routes, // `routes: routes` 的缩写
+        })
+        nodeStore.ts
+        import {defineStore} from "pinia";
+        import {MapNode} from "../struct/mapNode";
+        import * as LeafLet from "leaflet";
+        import {Polyline} from "leaflet";
+        class NodeStoreState {
+        map?: LeafLet.Map
+        inSelectionMode?: boolean
+        nodes: Array<MapNode> = new Array<MapNode>()
+                baseNode?: MapNode;
+                arrows?: Polyline
+                }
+                var nodeStore = defineStore('nodes', {
+                state: (): NodeStoreState => ({
+                map: undefined,
+                inSelectionMode: false,
+                nodes: new Array<MapNode>(),
+                    baseNode: undefined,
+                    arrows: undefined
+                    }),
+                    getters: {
+                    isInSelectionMode: (state) => {
+                    return state.inSelectionMode
+                    },
+                    getNodesCount: (state) => {
+                    return state.nodes.length
+                    },
+                    getNodes: (state) => {
+                    return state.nodes
+                    },
+                    getMap: (state) => {
+                    return state.map
+                    },
+                    hasBaseNode: (state) => {
+                    return !(state.baseNode == undefined)
+                    },
+                    getBaseNode: (state) => {
+                    return state.baseNode
+                    },
+                    hasArrows: (state) => {
+                    return !(state.arrows == undefined)
+                    },
+                    getArrows: (state) => {
+                    return state.arrows
+                    },
+                    isValidData: (state) => {
+                    if (state.baseNode == undefined) {
+                    console.log("No map base node")
+                    return false
+                    }
+                    if (state.nodes.length == 0) {
+                    console.log("No map node")
+                    return false
+                    }
+                    let invalid: boolean = false;
+                    state.nodes.forEach((node) => {
+                    if (!invalid) {
+                    if (node.name == undefined || node.name.length == 0) {
+                    console.log("Undefined node name")
+                    invalid = true
+                    }
+                    if (node.endTime == undefined || node.startTime == undefined || node.spentTime == undefined ||
+                    node.endTime < node.startTime) { console.log("Undefined node time window") invalid=true } } })
+                        return !invalid } }, actions: { setMap(map: LeafLet.Map) { this.map=map }, toggleSelectionMode()
+                        { this.inSelectionMode=!this.inSelectionMode }, addMapNode(node: MapNode) {
+                        this.nodes.push(node) }, getNodeByIndex(index: number): MapNode { return <MapNode>
+                        this.nodes[index]
+                        },
+                        getNodeById(id: number): MapNode {
+                        console.log("Finding for id: " + id)
+                        return <MapNode>this.nodes.find(node => {
+                            return node.id == id
+                            })
+                            },
+                            setNode(index: number, node: MapNode) {
+                            this.nodes[index] = node
+                            },
+                            removeNodeByIndex(index: number) {
+                            this.nodes.splice(index, 1)
+                            },
+                            removeNodeByNode(node: MapNode) {
+                            this.nodes.splice(this.nodes.indexOf(node), 1)
+                            },
+                            setBaseNode(node: MapNode) {
+                            this.baseNode = node
+                            },
+                            clearBaseNode() {
+                            this.baseNode = undefined
+                            },
+                            setArrows(arrows: Polyline) {
+                            this.arrows = arrows
+                            },
+                            clearArrows() {
+                            this.arrows = undefined
+                            }
+                            }
+                            })
+                            export default nodeStore
+                            mapNode.ts
+                            import {LatLng, Marker} from "leaflet";
+                            import {Exclude, Expose} from "class-transformer";
+                            export class MapNode {
+                            id: number
+                            position: LatLng
+                            name?: string
+                            @Expose({name: 'start_time'})
+                            startTime?: number
+                            @Expose({name: 'end_time'})
+                            endTime?: number
+                            @Expose({name: 'spent_time'})
+                            spentTime?: number
+                            @Exclude()
+                            marker: Marker | undefined
+                            constructor(id: number, position: LatLng) {
+                            this.id = id
+                            this.position = position
+                            this.marker = undefined
+                            }
+                            }
+                            nodeSequence.ts
+                            import {Expose, Type} from "class-transformer";
+                            export class NodeSequence {
+                            @Expose({name: 'node_sequence'})
+                            @Type(() => Map)
+                            nodeSequence: Map<string, number>
+                                constructor() {
+                                this.nodeSequence = new Map<string, number>()
+                                    }
+                                    }

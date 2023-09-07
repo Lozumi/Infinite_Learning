@@ -1,0 +1,4 @@
+﻿  Sales_item1.cpp
+C:\Users\Fairy·L·Migo\Desktop\大创学习\Sales_item.h(156,1): error C2011: “Sales_item”:“class”类型重定义
+C:\Users\Fairy·L·Migo\Desktop\大创学习\Sales_item.h(46,7): message : 参见“Sales_item”的声明
+C:\code\c++\Sales_item\Sales_item\Sales_item1.cpp(9,16): error C2079: “book”使用未定义的 class“Sales_item”
