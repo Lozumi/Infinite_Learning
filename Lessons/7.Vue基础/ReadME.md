@@ -715,8 +715,6 @@ const fullName = computed({
 
 # 五、Class与Style绑定
 
-# Class 与 Style 绑定 {#class-and-style-bindings}
-
 数据绑定的一个常见需求场景是操纵元素的 CSS class 列表和内联样式。因为 `class` 和 `style` 都是 attribute，我们可以和其他 attribute 一样使用 `v-bind` 将它们和动态的字符串绑定。但是，在处理比较复杂的绑定时，通过拼接生成字符串是麻烦且易出错的。因此，Vue 专门为 `class` 和 `style` 的 `v-bind` 用法提供了特殊的功能增强。除了字符串外，表达式的值也可以是对象或数组。
 
 ## 绑定 HTML class {#binding-html-classes}
