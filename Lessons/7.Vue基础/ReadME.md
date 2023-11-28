@@ -208,3 +208,190 @@ const objectOfAttrs = {
 最后是完整语法结构。
 
 ![vue1](./vue1.png)
+
+# 三、响应式基础
+
+## 声明响应式状态
+
+### `ref()`
+
+在组合式 API 中，推荐使用 [`ref()`](https://cn.vuejs.org/api/reactivity-core.html#ref) 函数来声明响应式状态：
+
+```js
+import { ref } from 'vue'
+
+const count = ref(0)
+```
+
+`ref()` 接收参数，并将其包裹在一个带有 `.value` 属性的 ref 对象中返回：
+
+```js
+const count = ref(0)
+
+console.log(count) // { value: 0 }
+console.log(count.value) // 0
+
+count.value++
+console.log(count.value) // 1
+```
+
+> 参考：[为 refs 标注类型](https://cn.vuejs.org/guide/typescript/composition-api.html#typing-ref) 
+
+要在组件模板中访问 ref，请从组件的 `setup()` 函数中声明并返回它们：
+
+```js
+import { ref } from 'vue'
+
+export default {
+  // `setup` 是一个特殊的钩子，专门用于组合式 API。
+  setup() {
+    const count = ref(0)
+
+    // 将 ref 暴露给模板
+    return {
+      count
+    }
+  }
+}
+```
+
+```vue
+<div>{{ count }}</div>
+```
+
+注意，在模板中使用 ref 时，我们**不**需要附加 `.value`。为了方便起见，当在模板中使用时，ref 会自动解包 (有一些[注意事项](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#caveat-when-unwrapping-in-templates))。
+
+你也可以直接在事件监听器中改变一个 ref：
+
+```vue
+<button @click="count++">
+  {{ count }}
+</button>
+```
+
+### `<script setup>`
+
+在 `setup()` 函数中手动暴露大量的状态和方法非常繁琐。幸运的是，我们可以通过使用[单文件组件 (SFC)](https://cn.vuejs.org/guide/scaling-up/sfc.html) 来避免这种情况。我们可以使用 `<script setup>` 来大幅度地简化代码：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+
+const count = ref(0)
+
+function increment() {
+  count.value++
+}
+</script>
+
+<template>
+  <button @click="increment">
+    {{ count }}
+  </button>
+</template>
+```
+
+`<script setup>`中的顶层的导入、声明的变量和函数可在同一组件的模板中直接使用。你可以理解为模板是在同一作用域内声明的一个 JavaScript 函数——它自然可以访问与它一起声明的所有内容。
+
+### 深层响应性
+
+Ref 可以持有任何类型的值，包括深层嵌套的对象、数组或者 JavaScript 内置的数据结构，比如 `Map`。
+
+Ref 会使它的值具有深层响应性。这意味着即使改变嵌套对象或数组时，变化也会被检测到：
+
+```js
+import { ref } from 'vue'
+
+const obj = ref({
+  nested: { count: 0 },
+  arr: ['foo', 'bar']
+})
+
+function mutateDeeply() {
+  // 以下都会按照期望工作
+  obj.value.nested.count++
+  obj.value.arr.push('baz')
+}
+```
+
+非原始值将通过 [`reactive()`](https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#reactive) 转换为响应式代理，该函数将在后面讨论。
+
+也可以通过 [shallow ref](https://cn.vuejs.org/api/reactivity-advanced.html#shallowref) 来放弃深层响应性。对于浅层 ref，只有 `.value` 的访问会被追踪。浅层 ref 可以用于避免对大型数据的响应性开销来优化性能、或者有外部库管理其内部状态的情况。
+
+### DOM 更新时机
+
+当你修改了响应式状态时，DOM 会被自动更新。但是需要注意的是，DOM 更新不是同步的。Vue 会在“next tick”更新周期中缓冲所有状态的修改，以确保不管你进行了多少次状态修改，每个组件都只会被更新一次。
+
+要等待 DOM 更新完成后再执行额外的代码，可以使用 [nextTick()](https://cn.vuejs.org/api/general.html#nexttick) 全局 API：
+
+```js
+import { nextTick } from 'vue'
+
+async function increment() {
+  count.value++
+  await nextTick()
+  // 现在 DOM 已经更新了
+}
+```
+
+## `reactive()`
+
+还有另一种声明响应式状态的方式，即使用 `reactive()` API。与将内部值包装在特殊对象中的 ref 不同，`reactive()` 将使对象本身具有响应性：
+
+```js
+import { reactive } from 'vue'
+
+const state = reactive({ count: 0 })
+```
+
+> 参考：[为 `reactive()` 标注类型](https://cn.vuejs.org/guide/typescript/composition-api.html#typing-reactive) 
+
+在模板中使用：
+
+```vue
+<button @click="state.count++">
+  {{ state.count }}
+</button>
+```
+
+响应式对象是 [JavaScript 代理](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)，其行为就和普通对象一样。不同的是，Vue 能够拦截对响应式对象所有属性的访问和修改，以便进行依赖追踪和触发更新。
+
+`reactive()` 将深层地转换对象：当访问嵌套对象时，它们也会被 `reactive()` 包装。当 ref 的值是一个对象时，`ref()` 也会在内部调用它。与浅层 ref 类似，这里也有一个 [`shallowReactive()`](https://cn.vuejs.org/api/reactivity-advanced.html#shallowreactive) API 可以选择退出深层响应性。
+
+### `reactive()` 的局限性
+
+`reactive()` API 有一些局限性：
+
+1. **有限的值类型**：它只能用于对象类型 (对象、数组和如 `Map`、`Set` 这样的[集合类型](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects#keyed_collections))。它不能持有如 `string`、`number` 或 `boolean` 这样的[原始类型](https://developer.mozilla.org/en-US/docs/Glossary/Primitive)。
+
+2. **不能替换整个对象**：由于 Vue 的响应式跟踪是通过属性访问实现的，因此我们必须始终保持对响应式对象的相同引用。这意味着我们不能轻易地“替换”响应式对象，因为这样的话与第一个引用的响应性连接将丢失：
+
+   js
+
+   ```
+   let state = reactive({ count: 0 })
+   
+   // 上面的 ({ count: 0 }) 引用将不再被追踪
+   // (响应性连接已丢失！)
+   state = reactive({ count: 1 })
+   ```
+
+3. **对解构操作不友好**：当我们将响应式对象的原始类型属性解构为本地变量时，或者将该属性传递给函数时，我们将丢失响应性连接：
+
+   js
+
+   ```
+   const state = reactive({ count: 0 })
+   
+   // 当解构时，count 已经与 state.count 断开连接
+   let { count } = state
+   // 不会影响原始的 state
+   count++
+   
+   // 该函数接收到的是一个普通的数字
+   // 并且无法追踪 state.count 的变化
+   // 我们必须传入整个对象以保持响应性
+   callSomeFunction(state.count)
+   ```
+
+由于这些限制，我们建议使用 `ref()` 作为声明响应式状态的主要 API。
