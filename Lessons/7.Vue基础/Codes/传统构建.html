@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 3 Page</title>
+    <!-- 引入 Vue 3 的全局构建 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+
+<!-- 应用程序的 HTML 模板 -->
+<div id="app">
+    <h1>跑起来咯！</h1>
+    {{ message }}
+    <h3>计数：{{count}}</h3>
+    <button @click="increment">count</button>
+</div>
+
+<!-- 创建 Vue 3 实例并挂载到 #app 元素上 -->
+<script>
+    const { createApp, ref } = Vue
+
+    createApp({
+        setup() {
+            const message = ref('Hello, Vue!')
+            const count = ref(0)
+
+            const increment = () => {
+                count.value++
+            }
+
+            // 返回要在模板中使用的数据和方法
+            return {
+                message,
+                count,
+                increment
+            }
+        }
+    }).mount('#app')
+</script>
+
+</body>
+</html>
