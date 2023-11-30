@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 3 Page</title>
+    <!-- 引入 Vue 3 的全局构建 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+
+<!-- 应用程序的 HTML 模板 -->
+<div id="app">
+    <h1>Migo！</h1>
+    {{ message }}
+    <h3>亲{{count}}下！</h3>
+    <button @click="increment">亲</button> <button @click="decrement">揉</button>
+    <!-- 输入框，使用 v-model 双向绑定输入值 -->
+    <!-- 确认按钮，点击时调用 updateCount 方法 -->
+    <p>或者...亲<input v-model="inputValue" placeholder="输入新的 count 值" style="width: auto">次 <button @click="updateCount">亲！</button></p>
+</div>
+
+<!-- 创建 Vue 3 实例并挂载到 #app 元素上 -->
+<script>
+    const { createApp, ref } = Vue
+
+    createApp({
+        setup() {
+            const message = ref('可爱，想...')
+            const count = ref(0)
+            const inputValue = ref('')
+
+            const increment = () => {
+                count.value++
+            }
+
+            const decrement = () =>{
+                count.value--
+            }
+
+            const updateCount = () => {
+                // 将输入的值转换为整数并更新 count
+                count.value = parseInt(inputValue.value) || 0
+            }
+
+            // 返回要在模板中使用的数据和方法
+            return {
+                message,
+                count,
+                inputValue,
+                increment,
+                decrement,
+                updateCount
+            }
+        }
+    }).mount('#app')
+</script>
+
+</body>
+</html>
