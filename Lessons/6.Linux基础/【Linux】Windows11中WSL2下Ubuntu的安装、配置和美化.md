@@ -205,5 +205,11 @@ sudo apt-get install zsh
 chsh -s /bin/zsh
 ```
 
+配置密码文件，解决chsh: PAM认证失败的问题
+
+把第一行的/bin/bash改成/bin/zsh，这个是root用户的。
+
+把最后一行的/bin/bash改成/bin/zsh，这个应该是每台电脑的登录用户名+计算机名组成的。
+
 zsh的配置和美化比较繁琐，一般使用oh-my-zsh进行配置。详见文章【Ubuntu下zsh和oh-my-zsh的安装、配置和美化】。
 

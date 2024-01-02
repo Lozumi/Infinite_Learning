@@ -1,0 +1,1 @@
+powerlevel10k提示词配置：[powerlevel10k/README.md at master · romkatv/powerlevel10k (github.com)](https://github.com/romkatv/powerlevel10k/blob/master/README.md#batteries-included)
