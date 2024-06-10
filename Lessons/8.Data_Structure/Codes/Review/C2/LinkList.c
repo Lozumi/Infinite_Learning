@@ -139,3 +139,29 @@ void Difference(LinkList LA, LinkList LB)
             }
      }/*while循环*/
 }
+
+LinkList merge_1(LinkList LA,LinkList LB)
+{
+    Node *p,*q;
+    p = LA;
+    q = LB;
+    while (p->next!=LA)
+        p=p->next;
+    while (q->next!=LB)
+        q=q->next;
+    p->next=LB->next;
+    free(LB);
+    q->next=LA;
+    return LA;
+}
+
+ LinkList merge_2(LinkList RA, LinkList RB)
+{     /*此算法将两个采用尾指针的循环链表首尾连接起来*/
+      Node *p,*q;
+      p=RA->next;  /*保存链表RA的头结点地址*/
+      q=RB->next; /*保存链表RB的头结点地址*/
+      RA->next=q->next;
+      free(q);   /*释放表RB的表头指针*/
+      RB->next=p;
+      return (RB);
+}
